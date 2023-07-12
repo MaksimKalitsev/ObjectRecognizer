@@ -60,6 +60,7 @@ class MainActivity : ComponentActivity() {
                 if (shouldShowPhoto.value) {
                     shouldShowCamera.value = true
                     shouldShowPhoto.value = false
+                    recognizedText.value = ""
                 } else {
                     finish()
                 }
