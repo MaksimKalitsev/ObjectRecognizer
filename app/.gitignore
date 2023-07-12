@@ -1,4 +1,4 @@
 /build
 account_key
 account_key_smart_scan_foods.json
-google-services.json
+/src/google-services.json
