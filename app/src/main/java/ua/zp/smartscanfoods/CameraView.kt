@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import ua.zp.smartscanfoods.ui.theme.SmartScanFoodsTheme
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale

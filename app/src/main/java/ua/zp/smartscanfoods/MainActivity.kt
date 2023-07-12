@@ -10,11 +10,15 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,6 +37,10 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var photoUri: Uri
     private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
+
+    private var isProcessing: MutableState<Boolean> = mutableStateOf(false)
+
+    private var recognizedText: MutableState<String> = mutableStateOf("")
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -79,6 +87,24 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize()
                         )
                     }
+                    if (isProcessing.value) {
+                        LaunchedEffect(Unit){
+                            isProcessing.value = true
+                            textRecognition(
+                                context = this@MainActivity,
+                                uri = photoUri,
+                                onSuccess = {text-> recognizedText.value = text
+                                isProcessing.value = false},
+                                onFailure = {isProcessing.value = false}
+                            )
+                        }
+                    }else{
+                        Box(modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center){
+                            CircularProgressIndicator()
+                        }
+                    }
+                    ResponseView(text = recognizedText.value)
                 }
             }
         }
@@ -112,6 +138,8 @@ class MainActivity : ComponentActivity() {
 
         photoUri = uri
         shouldShowPhoto.value = true
+        isProcessing.value = true
+
     }
 
     private fun getOutputDirectory(): File {
