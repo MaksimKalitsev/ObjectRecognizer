@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -46,6 +47,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (shouldShowPhoto.value) {
+                    shouldShowCamera.value = true
+                    shouldShowPhoto.value = false
+                } else {
+                    finish()
+                }
+            }
+        })
         setContent {
             SmartScanFoodsTheme {
                 // A surface container using the 'background' color from the theme
