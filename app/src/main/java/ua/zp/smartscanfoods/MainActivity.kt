@@ -32,13 +32,11 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var photoUri: Uri
 
     private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
-
-    private lateinit var photoUri: Uri
     private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
-
-    private var isProcessing: MutableState<Boolean> = mutableStateOf(false)
+    private var shouldShowRecognizedText: MutableState<Boolean> = mutableStateOf(false)
 
     private var recognizedText: MutableState<String> = mutableStateOf("")
 
@@ -88,15 +86,15 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-                    if (isProcessing.value) {
+                    if (shouldShowRecognizedText.value) {
                         LaunchedEffect(Unit){
-                            isProcessing.value = true
+                            shouldShowRecognizedText.value = true
                             textRecognition(
                                 context = this@MainActivity,
                                 uri = photoUri,
                                 onSuccess = {text-> recognizedText.value = text
-                                isProcessing.value = false},
-                                onFailure = {isProcessing.value = false}
+                                shouldShowRecognizedText.value = false},
+                                onFailure = {shouldShowRecognizedText.value = false}
                             )
                         }
                     }else{
@@ -139,7 +137,7 @@ class MainActivity : ComponentActivity() {
 
         photoUri = uri
         shouldShowPhoto.value = true
-        isProcessing.value = true
+        shouldShowRecognizedText.value = true
 
     }
 
