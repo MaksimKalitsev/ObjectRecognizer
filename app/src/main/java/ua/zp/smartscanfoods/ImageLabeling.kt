@@ -10,21 +10,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.objects.ObjectDetection
+import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions
-import java.io.IOException
 
 @Composable
-fun ResponseViewObjectDetection(objects: List<String>) {
+fun ResponseViewImageLabeling(labels: List<String>) {
     Column(modifier = Modifier.padding(20.dp)) {
         Text(text = "Detected objects:")
-        for (obj in objects) {
-            Text(text = obj)
+        for (label in labels) {
+            Text(text = label)
         }
     }
 }
 
-fun objectDetection(
+fun imageLabeling(
     context: Context,
     uri: Uri,
     onSuccess: (List<String>) -> Unit,
@@ -36,25 +35,15 @@ fun objectDetection(
         .enableClassification()
         .build()
 
-    val objectDetector = ObjectDetection.getClient(objectDetectorOptions)
+    val labeler = ImageLabeling.getClient(com.google.mlkit.vision.label.defaults.ImageLabelerOptions.DEFAULT_OPTIONS)
     val image = InputImage.fromFilePath(context, uri)
 
-    objectDetector.process(image)
-        .addOnSuccessListener { objects ->
-            val objectList = mutableListOf<String>()
-            for (obj in objects) {
-                val boundingBox = obj.boundingBox
-                val labels = obj.labels.map { label ->
-                    "Text: ${label.text}, Index: ${label.index}, Confidence: ${label.confidence}"
-                }
-                val info = """
-                BoundingBox: $boundingBox,
-                Lables: $labels
-
-            """.trimIndent()
-                objectList.add(info)
+    labeler.process(image)
+        .addOnSuccessListener { labels ->
+            val labelList = labels.map {label ->
+                "Text: ${label.text}, Index: ${label.index}, Confidence: ${label.confidence}"
             }
-            onSuccess(objectList)
+            onSuccess(labelList)
         }
         .addOnFailureListener { e ->
             Log.e("ML Kit", "Object Detection Failed", e)

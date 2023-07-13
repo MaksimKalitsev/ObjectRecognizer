@@ -37,10 +37,10 @@ class MainActivity : ComponentActivity() {
     private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
     private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
     private var shouldShowRecognizedText: MutableState<Boolean> = mutableStateOf(false)
-    private var shouldShowDetectionObject: MutableState<Boolean> = mutableStateOf(false)
+    private var shouldShowImageLabeling: MutableState<Boolean> = mutableStateOf(false)
 
     private var recognizedText: MutableState<String> = mutableStateOf("")
-    private var recognizedObjects: MutableState<List<String>> = mutableStateOf(emptyList())
+    private var recognizedImages: MutableState<List<String>> = mutableStateOf(emptyList())
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     shouldShowCamera.value = true
                     shouldShowPhoto.value = false
                     recognizedText.value = ""
-                    recognizedObjects.value = emptyList()
+                    recognizedImages.value = emptyList()
                 } else {
                     finish()
                 }
@@ -101,15 +101,15 @@ class MainActivity : ComponentActivity() {
 //                            )
 //                        }
 //                    }
-                    if(shouldShowDetectionObject.value){
+                    if(shouldShowImageLabeling.value){
                         LaunchedEffect(Unit){
-                            shouldShowDetectionObject.value = true
-                            objectDetection(
+                            shouldShowImageLabeling.value = true
+                            imageLabeling(
                                 context = this@MainActivity,
                                 uri = photoUri,
-                                onSuccess = {objects-> recognizedObjects.value = objects
-                                shouldShowDetectionObject.value = false},
-                                onFailure = {shouldShowDetectionObject.value = false}
+                                onSuccess = {objects-> recognizedImages.value = objects
+                                shouldShowImageLabeling.value = false},
+                                onFailure = {shouldShowImageLabeling.value = false}
                             )
                         }
                     }
@@ -120,7 +120,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 //                    ResponseViewTextRecognition(text = recognizedText.value)
-                    ResponseViewObjectDetection(objects = recognizedObjects.value, )
+                    ResponseViewImageLabeling(labels = recognizedImages.value)
                 }
             }
         }
@@ -155,7 +155,7 @@ class MainActivity : ComponentActivity() {
         photoUri = uri
         shouldShowPhoto.value = true
 //        shouldShowRecognizedText.value = true
-        shouldShowDetectionObject.value = true
+        shouldShowImageLabeling.value = true
     }
 
     private fun getOutputDirectory(): File {
