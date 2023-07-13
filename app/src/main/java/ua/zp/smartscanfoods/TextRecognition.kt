@@ -14,14 +14,19 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
 @Composable
-fun ResponseView(text: String) {
+fun ResponseViewTextRecognition(text: String) {
     Column(modifier = Modifier.padding(20.dp)) {
         Text(text = "Recognized Text:")
         Text(text = text)
     }
 }
 
- fun textRecognition(context: Context, uri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+fun textRecognition(
+    context: Context,
+    uri: Uri,
+    onSuccess: (String) -> Unit,
+    onFailure: (Exception) -> Unit
+) {
     val image = InputImage.fromFilePath(context, uri)
     val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 

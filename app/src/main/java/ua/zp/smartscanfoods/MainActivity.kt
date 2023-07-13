@@ -37,8 +37,10 @@ class MainActivity : ComponentActivity() {
     private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
     private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
     private var shouldShowRecognizedText: MutableState<Boolean> = mutableStateOf(false)
+    private var shouldShowDetectionObject: MutableState<Boolean> = mutableStateOf(false)
 
     private var recognizedText: MutableState<String> = mutableStateOf("")
+    private var recognizedObjects: MutableState<List<String>> = mutableStateOf(emptyList())
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -59,6 +61,7 @@ class MainActivity : ComponentActivity() {
                     shouldShowCamera.value = true
                     shouldShowPhoto.value = false
                     recognizedText.value = ""
+                    recognizedObjects.value = emptyList()
                 } else {
                     finish()
                 }
@@ -86,24 +89,38 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-                    if (shouldShowRecognizedText.value) {
+//                    if (shouldShowRecognizedText.value) {
+//                        LaunchedEffect(Unit){
+//                            shouldShowRecognizedText.value = true
+//                            textRecognition(
+//                                context = this@MainActivity,
+//                                uri = photoUri,
+//                                onSuccess = {text-> recognizedText.value = text
+//                                shouldShowRecognizedText.value = false},
+//                                onFailure = {shouldShowRecognizedText.value = false}
+//                            )
+//                        }
+//                    }
+                    if(shouldShowDetectionObject.value){
                         LaunchedEffect(Unit){
-                            shouldShowRecognizedText.value = true
-                            textRecognition(
+                            shouldShowDetectionObject.value = true
+                            objectDetection(
                                 context = this@MainActivity,
                                 uri = photoUri,
-                                onSuccess = {text-> recognizedText.value = text
-                                shouldShowRecognizedText.value = false},
-                                onFailure = {shouldShowRecognizedText.value = false}
+                                onSuccess = {objects-> recognizedObjects.value = objects
+                                shouldShowDetectionObject.value = false},
+                                onFailure = {shouldShowDetectionObject.value = false}
                             )
                         }
-                    }else{
+                    }
+                    else{
                         Box(modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center){
                             CircularProgressIndicator()
                         }
                     }
-                    ResponseView(text = recognizedText.value)
+//                    ResponseViewTextRecognition(text = recognizedText.value)
+                    ResponseViewObjectDetection(objects = recognizedObjects.value, )
                 }
             }
         }
@@ -137,8 +154,8 @@ class MainActivity : ComponentActivity() {
 
         photoUri = uri
         shouldShowPhoto.value = true
-        shouldShowRecognizedText.value = true
-
+//        shouldShowRecognizedText.value = true
+        shouldShowDetectionObject.value = true
     }
 
     private fun getOutputDirectory(): File {
