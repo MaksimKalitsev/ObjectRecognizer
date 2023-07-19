@@ -1,5 +1,6 @@
 package ua.zp.smartscanfoods
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,6 +11,8 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.media.ExifInterface
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,17 +21,25 @@ import org.tensorflow.lite.task.vision.detector.Detection
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
 import java.lang.Integer.max
 import java.lang.Integer.min
+import java.util.Locale
 
-class ImageClassifier(private val context: Context) {
+class ImageClassifier(private val context: Context) : TextToSpeech.OnInitListener {
 
-    fun runObjectDetection(bitmap: Bitmap):Bitmap{
+    //    private var textToSpeech: TextToSpeech? = null
+    private var textToSpeech = TextToSpeech(context, this)
+
+    fun runObjectDetection(bitmap: Bitmap): Bitmap {
         val image = TensorImage.fromBitmap(bitmap)
 
         val options = ObjectDetector.ObjectDetectorOptions.builder()
             .setMaxResults(5)
             .setScoreThreshold(0.5f)
             .build()
-        val detector = ObjectDetector.createFromFileAndOptions(context, "Test_TensorFlow_Lite_Model.tflite", options)
+        val detector = ObjectDetector.createFromFileAndOptions(
+            context,
+            "Test_TensorFlow_Lite_Model.tflite",
+            options
+        )
 
         val results = detector.detect(image)
 
@@ -37,15 +48,15 @@ class ImageClassifier(private val context: Context) {
             val text = "${category.label}, ${category.score.times(100).toInt()}%"
             DetectionResult(it.boundingBox, text)
         }
+
+        resultsToDisplay.forEach { result ->
+            val text = result.text
+            textToSpeech?.speak(text, TextToSpeech.QUEUE_ADD, null, null)
+        }
+
         val imageWithResult = drawDetectionResult(bitmap, resultsToDisplay)
         return imageWithResult
     }
-
-
-    private fun setViewAndObject(bitmap: Bitmap) {
-        runObjectDetection(bitmap)
-    }
-
 
     fun getCapturedImage(currentPhotoPath: String): Bitmap {
         val targetW = 500
@@ -151,6 +162,18 @@ class ImageClassifier(private val context: Context) {
                             "Score: ${detection.categories.firstOrNull()?.score ?: 0.0}, " +
                             "Box: ${detection.boundingBox}"
                 )
+            }
+        }
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val result = textToSpeech!!.setLanguage(Locale.getDefault())
+
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "The Language not supported!")
+            } else {
+                Log.e(TAG, "Text to speech initialization failed: $status")
             }
         }
     }
