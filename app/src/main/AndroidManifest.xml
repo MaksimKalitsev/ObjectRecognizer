@@ -32,7 +32,7 @@
 
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
-            android:value="ica" />
+            android:value="ica, custom_ica" />
 
     </application>
 
