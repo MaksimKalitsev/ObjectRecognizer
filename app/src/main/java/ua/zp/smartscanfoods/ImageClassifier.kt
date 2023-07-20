@@ -9,15 +9,10 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.RectF
-import android.media.ExifInterface
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.exifinterface.media.ExifInterface
 import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.task.vision.detector.Detection
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
 import java.lang.Integer.max
 import java.lang.Integer.min
@@ -25,7 +20,6 @@ import java.util.Locale
 
 class ImageClassifier(private val context: Context) : TextToSpeech.OnInitListener {
 
-    //    private var textToSpeech: TextToSpeech? = null
     private var textToSpeech = TextToSpeech(context, this)
 
     fun runObjectDetection(bitmap: Bitmap): Bitmap {
@@ -51,11 +45,10 @@ class ImageClassifier(private val context: Context) : TextToSpeech.OnInitListene
 
         resultsToDisplay.forEach { result ->
             val text = result.text
-            textToSpeech?.speak(text, TextToSpeech.QUEUE_ADD, null, null)
+            textToSpeech.speak(text, TextToSpeech.QUEUE_ADD, null, null)
         }
 
-        val imageWithResult = drawDetectionResult(bitmap, resultsToDisplay)
-        return imageWithResult
+        return drawDetectionResult(bitmap, resultsToDisplay)
     }
 
     fun getCapturedImage(currentPhotoPath: String): Bitmap {
@@ -103,8 +96,7 @@ class ImageClassifier(private val context: Context) : TextToSpeech.OnInitListene
         }
     }
 
-
-    fun rotateImage(source: Bitmap, angle: Float): Bitmap {
+    private fun rotateImage(source: Bitmap, angle: Float): Bitmap {
         val matrix = Matrix()
         matrix.postRotate(angle)
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
@@ -149,32 +141,19 @@ class ImageClassifier(private val context: Context) : TextToSpeech.OnInitListene
         return outputBitmap
     }
 
-
-    data class DetectionResult(val boundingBox: RectF, val text: String)
-
-
-    @Composable
-    fun DisplayResults(detections: List<Detection>) {
-        Column {
-            detections.forEach { detection ->
-                Text(
-                    text = "Class: ${detection.categories.firstOrNull()?.label ?: "Unknown"}, " +
-                            "Score: ${detection.categories.firstOrNull()?.score ?: 0.0}, " +
-                            "Box: ${detection.boundingBox}"
-                )
-            }
-        }
-    }
-
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            val result = textToSpeech!!.setLanguage(Locale.getDefault())
+            val result = textToSpeech.setLanguage(Locale.getDefault())
 
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "The Language not supported!")
             } else {
-                Log.e(TAG, "Text to speech initialization failed: $status")
+                Log.e(TAG, "Text to speech initialization failed")
             }
         }
+    }
+
+    fun onDestroy() {
+        textToSpeech.shutdown()
     }
 }
