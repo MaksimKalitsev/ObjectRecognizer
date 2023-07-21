@@ -43,17 +43,17 @@ fun CameraView(
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
     onError: (ImageCaptureException) -> Unit
-){
+) {
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val preview = Preview.Builder().build()
-    val previewView = remember {PreviewView(context)}
-    val imageCapture:ImageCapture = remember {ImageCapture.Builder().build()}
+    val previewView = remember { PreviewView(context) }
+    val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
     val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
-    LaunchedEffect(lensFacing){
+    LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
         cameraProvider.unbindAll()
         cameraProvider.bindToLifecycle(
@@ -66,7 +66,7 @@ fun CameraView(
     }
 
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
-        AndroidView({previewView}, modifier = Modifier.fillMaxSize())
+        AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
         IconButton(
             modifier = Modifier.padding(bottom = 20.dp),
             onClick = {
@@ -79,17 +79,17 @@ fun CameraView(
                     onError = onError
                 )
             },
-        content = {
-            Icon(
-                imageVector = Icons.Sharp.Lens,
-                contentDescription = "Take picture",
-                tint = Color.White,
-                modifier = Modifier
-                    .size(200.dp)
-                    .padding(1.dp)
-                    .border(1.dp, Color.White, CircleShape)
-            )
-        }
+            content = {
+                Icon(
+                    imageVector = Icons.Sharp.Lens,
+                    contentDescription = "Take picture",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .padding(1.dp)
+                        .border(1.dp, Color.White, CircleShape)
+                )
+            }
         )
     }
 }
@@ -108,7 +108,7 @@ private fun takePhoto(
     )
     val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-    imageCapture.takePicture(outputOptions, executor, object: ImageCapture.OnImageSavedCallback {
+    imageCapture.takePicture(outputOptions, executor, object : ImageCapture.OnImageSavedCallback {
         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
             val savedUri = Uri.fromFile(photoFile)
             onImageCaptured(savedUri)
@@ -121,10 +121,11 @@ private fun takePhoto(
     })
 }
 
-private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine {continuation ->
-    ProcessCameraProvider.getInstance(this).also {cameraProvider ->
-        cameraProvider.addListener({
-            continuation.resume(cameraProvider.get())
-        }, ContextCompat.getMainExecutor(this))
+private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
+    suspendCoroutine { continuation ->
+        ProcessCameraProvider.getInstance(this).also { cameraProvider ->
+            cameraProvider.addListener({
+                continuation.resume(cameraProvider.get())
+            }, ContextCompat.getMainExecutor(this))
+        }
     }
-}

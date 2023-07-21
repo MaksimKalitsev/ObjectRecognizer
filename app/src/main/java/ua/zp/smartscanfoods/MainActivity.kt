@@ -33,7 +33,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var cameraExecutor:ExecutorService
+    lateinit var cameraExecutor: ExecutorService
 
     private lateinit var outputDirectory: File
     private lateinit var photoUri: Uri

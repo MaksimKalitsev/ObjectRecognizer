@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera.any" />
 
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -17,7 +18,6 @@
         android:roundIcon="@mipmap/icon_app_2"
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartScanFoods"
-        android:name=".App"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
