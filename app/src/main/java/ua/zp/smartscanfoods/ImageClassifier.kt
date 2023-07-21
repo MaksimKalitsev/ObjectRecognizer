@@ -17,23 +17,18 @@ import org.tensorflow.lite.task.vision.detector.ObjectDetector
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ImageClassifier(private val context: Context) : TextToSpeech.OnInitListener {
+@Singleton
+class ImageClassifier @Inject constructor(
+    private var textToSpeech: TextToSpeech,
+    private val detector: ObjectDetector
+) : TextToSpeech.OnInitListener {
 
-    private var textToSpeech = TextToSpeech(context, this)
 
     fun runObjectDetection(bitmap: Bitmap): Bitmap {
         val image = TensorImage.fromBitmap(bitmap)
-
-        val options = ObjectDetector.ObjectDetectorOptions.builder()
-            .setMaxResults(5)
-            .setScoreThreshold(0.5f)
-            .build()
-        val detector = ObjectDetector.createFromFileAndOptions(
-            context,
-            "Test_TensorFlow_Lite_Model.tflite",
-            options
-        )
 
         val results = detector.detect(image)
 

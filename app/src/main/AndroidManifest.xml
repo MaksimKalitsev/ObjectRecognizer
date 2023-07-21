@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/icon_app_2"
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartScanFoods"
+        android:name=".App"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"

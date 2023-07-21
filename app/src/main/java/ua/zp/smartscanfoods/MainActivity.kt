@@ -22,15 +22,20 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import dagger.hilt.android.AndroidEntryPoint
 import ua.zp.smartscanfoods.ui.theme.SmartScanFoodsTheme
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var cameraExecutor:ExecutorService
+
     private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
     private lateinit var photoUri: Uri
 
     private val imageClassifierViewModel: ImageClassifierViewModel by viewModels()
