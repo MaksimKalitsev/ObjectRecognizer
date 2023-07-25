@@ -5,9 +5,9 @@
 **This project is a demonstration app written in Kotlin.**
 
 **Used technologies:**
--Kotlin
--Machine Learning (TensorFlow Lite)
--Jetpack Compose
+- Kotlin
+- Machine Learning (TensorFlow Lite)
+- Jetpack Compose
 - Hilt
 
   **Features:**
