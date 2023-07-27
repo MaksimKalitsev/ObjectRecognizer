@@ -1,6 +1,6 @@
 ![image](https://img.shields.io/badge/platform-android-green.svg) ![image](https://img.shields.io/badge/language-kotlin-blue.svg)
 
-# ObjectFinder
+# ObjectRecognizer
 
 **This project is a demonstration app written in Kotlin.**
 
